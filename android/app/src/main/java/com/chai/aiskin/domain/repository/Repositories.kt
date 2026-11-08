@@ -4,6 +4,7 @@ import com.chai.aiskin.core.common.AppResult
 import com.chai.aiskin.domain.model.AuthState
 import com.chai.aiskin.domain.model.AuthUser
 import com.chai.aiskin.domain.model.HistoryPage
+import com.chai.aiskin.domain.model.ProductSuggestions
 import com.chai.aiskin.domain.model.SkinAnalysis
 import com.chai.aiskin.domain.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +31,8 @@ interface AnalysisRepository {
     suspend fun delete(id: String): AppResult<Unit>
     suspend fun deletePhoto(id: String): AppResult<Unit>
     suspend fun sendFeedback(id: String, helpful: Boolean, rating: Int?, comment: String?): AppResult<Unit>
+    /** AI product suggestions for an analysis; cached by the backend unless [refresh]. */
+    suspend fun findProducts(id: String, refresh: Boolean): AppResult<ProductSuggestions>
     suspend fun deleteAccount(): AppResult<Unit>
 }
 

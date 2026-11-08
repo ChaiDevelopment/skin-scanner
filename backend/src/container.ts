@@ -15,11 +15,13 @@ import {
   NoopAccountAdmin,
 } from './services/analysis/memory-stores';
 import { GeminiSkinAnalyzer } from './services/gemini/gemini.service';
+import { GeminiProductFinder } from './services/products/product-finder';
 import { getAppCheck } from 'firebase-admin/app-check';
 
 /** Wires real infrastructure from configuration. Reports clearly what is missing. */
 export function buildProductionDeps(config: AppConfig, logger: Logger): AppDeps {
   const analyzer = new GeminiSkinAnalyzer(config.gemini, logger);
+  const productFinder = new GeminiProductFinder(config.gemini, logger);
   if (!analyzer.configured) logger.warn('GEMINI_API_KEY is not set — POST /skin-analysis will return 503 NOT_CONFIGURED');
 
   const firebaseApp = initFirebaseAdmin(config);
@@ -32,6 +34,7 @@ export function buildProductionDeps(config: AppConfig, logger: Logger): AppDeps 
       config,
       logger,
       analyzer,
+      productFinder,
       firebaseConfigured: true,
       verifier: new FirebaseTokenVerifier(firebaseApp),
       store: new FirestoreAnalysisStore(firebaseApp),
@@ -54,6 +57,7 @@ export function buildProductionDeps(config: AppConfig, logger: Logger): AppDeps 
       config,
       logger,
       analyzer,
+      productFinder,
       firebaseConfigured: false,
       verifier: new DevBypassTokenVerifier(null),
       store: new InMemoryAnalysisStore(),
@@ -67,6 +71,7 @@ export function buildProductionDeps(config: AppConfig, logger: Logger): AppDeps 
     config,
     logger,
     analyzer,
+    productFinder,
     firebaseConfigured: false,
     verifier: null,
     store: new InMemoryAnalysisStore(),

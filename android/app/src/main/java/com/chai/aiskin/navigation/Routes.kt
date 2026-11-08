@@ -14,6 +14,8 @@ sealed interface Route {
     @Serializable data object Scanning : Route
     /** [fresh] = just produced by a scan (vs. opened from history). */
     @Serializable data class Result(val analysisId: String, val fresh: Boolean) : Route
+    /** AI product suggestions for one analysis. */
+    @Serializable data class Products(val analysisId: String) : Route
     @Serializable data object History : Route
     @Serializable data class Compare(val firstId: String, val secondId: String) : Route
     @Serializable data object Profile : Route

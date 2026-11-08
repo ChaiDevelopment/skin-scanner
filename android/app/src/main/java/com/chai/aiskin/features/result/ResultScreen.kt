@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.ErrorOutline
@@ -37,12 +40,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chai.aiskin.core.common.AppError
+import com.chai.aiskin.core.designsystem.AiSkinTheme
 import com.chai.aiskin.core.designsystem.AppCard
 import com.chai.aiskin.core.designsystem.AppTopBar
 import com.chai.aiskin.core.designsystem.ErrorView
@@ -59,6 +64,7 @@ fun ResultScreen(
     onDone: () -> Unit,
     onScanAgain: () -> Unit,
     onDeleted: () -> Unit,
+    onFindProducts: () -> Unit,
     vm: ResultViewModel = hiltViewModel(),
 ) {
     val s by vm.state.collectAsStateWithLifecycle()
@@ -103,6 +109,25 @@ fun ResultScreen(
                 verticalArrangement = Arrangement.spacedBy(Spacing.lg),
             ) {
                 AnalysisBody(c.analysis)
+                AppCard(
+                    onClick = onFindProducts,
+                    containerColor = AiSkinTheme.extended.accentSoft,
+                    borderColor = AiSkinTheme.extended.accent,
+                    modifier = Modifier.testTag("find_products"),
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.ShoppingBag, null, tint = AiSkinTheme.extended.accent)
+                        Spacer(Modifier.width(Spacing.sm))
+                        Column(Modifier.weight(1f)) {
+                            Text("Cari produk yang cocok", style = MaterialTheme.typography.titleSmall)
+                            Text(
+                                "AI mencarikan skincare yang dijual di Indonesia sesuai hasil analisis ini.",
+                                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null, tint = AiSkinTheme.extended.accent)
+                    }
+                }
                 if (c.analysis.photoStored) {
                     AppCard {
                         ScanPhoto(

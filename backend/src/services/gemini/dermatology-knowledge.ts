@@ -6,12 +6,13 @@
  * request and is instructed to base its observations and skincare advice on
  * it. Content follows widely taught, over-the-counter (OTC) skincare
  * principles from dermatology curricula and consensus guidance. It contains
- * no prescription regimens and no brand endorsements.
+ * no prescription regimens and no brand endorsements (brands are named only by
+ * the separate product finder, which follows section M).
  *
  * Bump KNOWLEDGE_VERSION whenever this text changes so stored analyses can be
  * traced back to the reference they were produced with.
  */
-export const KNOWLEDGE_VERSION = '2026.11-1';
+export const KNOWLEDGE_VERSION = '2026.11-2';
 
 export const DERMATOLOGY_KNOWLEDGE = `
 # DERMATOLOGY REFERENCE (for visual observation and OTC skincare guidance)
@@ -80,10 +81,58 @@ Set professional_consultation_recommended = true and give a brief reason when th
 - Any finding the model is uncertain about but which could be important.
 Also always remind: persistent, worsening, painful, or worrying skin problems should be checked by a doctor; this app cannot diagnose.
 
-## G. Things you must never do
+## H. Reading skin type and condition from a photo (always tentative)
+- A single photo cannot determine skin type. Phrase as "tampak" (appears) and base it only on visible cues:
+  - Oily-looking: shine across forehead, nose, chin and cheeks; visible pores; possibly congestion.
+  - Combination-looking: shine and pores mostly in the T-zone, cheeks matte or normal.
+  - Dry-looking: dull, rough or flaky areas, fine lines that look accentuated, no shine.
+  - Normal-looking: even texture, little shine, no flaking.
+  - Sensitive/reactive-looking: diffuse redness, visible irritation, flaking around nose or mouth.
+- Dehydrated vs dry: skin can look both shiny and tight/flaky (common after harsh cleansing or too many actives) — this suggests a stressed barrier, not "dry skin type".
+- Barrier stress signs: redness, stinging-looking patches, flaking, rough shiny-tight areas, sudden breakouts after starting many products. Advice: pause exfoliants and retinoids for 1–2 weeks, simplify to cleanser + barrier moisturizer + sunscreen, then reintroduce one active slowly.
+- Purging vs breakout: after starting a retinoid or exfoliating acid, a temporary increase of small spots in usual breakout areas for up to 4–6 weeks can occur. Spots in new areas, burning, swelling or itching suggest irritation or intolerance — stop the product.
+
+## I. Ingredient compatibility and layering
+- Layer thinnest to thickest: cleanser → toner/essence → serum (actives) → moisturizer → sunscreen (AM, always last).
+- Usually fine together: niacinamide with almost anything; hyaluronic acid, ceramides, panthenol, centella with any active; vitamin C (AM) + sunscreen.
+- Do NOT start together on the same night: retinol + AHA/BHA; retinol + benzoyl peroxide (use different times); several acids at once; vitamin C + strong acids for sensitive skin.
+- Alternate nights instead ("skin cycling" style): e.g. night 1 exfoliant, night 2 retinol, nights 3–4 recovery (moisturizer only).
+- Benzoyl peroxide can bleach towels and hijab/pillow fabric — mention this.
+- Spot treatment goes only on the spot, after moisturizer has absorbed or before it, per the product label.
+
+## J. Sunscreen selection for Indonesia
+- Daily: broad spectrum SPF 30–50, PA+++ or PA++++. Most Indonesian users prefer light gel/fluid textures in humid heat.
+- Chemical (organic) filters: light, no white cast; occasionally sting around eyes. Mineral (zinc oxide/titanium dioxide): often better for redness-prone/sensitive skin; may leave white cast on medium-to-deep skin — tinted versions help.
+- Tinted sunscreens with iron oxides also protect against visible light, which helps dark marks and patchy pigmentation.
+- Outdoor, sweaty or swimming: water-resistant formula; reapply every 2 hours. Makeup users can reapply with sunscreen sticks/sprays/cushions, but these alone rarely give full protection — apply properly in the morning.
+- Oily/acne-prone: "non-comedogenic", "oil-free", matte finish. Dry: moisturizing/cream sunscreen.
+
+## K. Special situations (general cautions only — never assume the user is in one)
+- Pregnancy/breastfeeding: avoid retinoids (retinol, retinal, tretinoin), hydroquinone and high-strength chemical peels; generally considered safer options after asking a doctor/midwife: azelaic acid, niacinamide, mineral sunscreen, gentle moisturizers; low-strength salicylic acid wash only after consultation.
+- Teenagers: keep routines minimal (gentle cleanser, moisturizer, sunscreen, one acne active if needed); avoid trend-driven multi-step routines.
+- Shaving areas (beard/neck): ingrown-hair bumps from shaving — shave with the grain, use a clean sharp blade, consider gentle exfoliation; refer if painful or scarring.
+- Mask/hijab/helmet wearers: friction, heat and sweat can worsen breakouts along jawline, chin, forehead and hairline ("maskne"). Advise breathable cotton inner layers, changing them daily, washing face after sweating, light non-comedogenic products.
+- Uniform, small, itchy bumps on forehead/hairline that do not respond to usual acne care may be a different condition — advise a doctor visit instead of stronger acne products (do not name a diagnosis).
+- Very dark under-eye areas: can be from pigmentation, shadows (anatomy), visible vessels or sleep; topical products have modest effect; sunscreen and gentle care; do not promise removal.
+- Lips: dryness/cracking — fragrance-free lip balm with SPF in daytime; persistent cracking at mouth corners → doctor.
+
+## L. Realistic expectations and timelines
+- Hydration/comfort: days. Shine control: 2–4 weeks. Comedones and acne-like spots: 6–12 weeks. Dark marks: 8–12 weeks or longer, and only with daily sunscreen. Texture: 3–6 months.
+- Consistency matters more than the number of products. Photograph progress under the same lighting.
+- Picking or squeezing spots increases dark marks and scarring.
+
+## M. Choosing products in Indonesia (used by the product finder)
+- BPOM: cosmetics sold in Indonesia must carry a BPOM notification number (two letters, e.g. "NA", followed by 11 digits). Users can verify it at cekbpom.pom.go.id or in the BPOM Mobile app.
+- Red flags: claims of instant whitening/brightening in days, "glowing in 3 days", no ingredient list, sold only as unlabelled "racikan", very cheap "dokter" creams without BPOM — may contain mercury, hydroquinone or steroids.
+- Match products to the routine, not trends: one product per need. Prefer fragrance-free and alcohol-light formulas for redness-prone/sensitive-looking skin; "non-comedogenic" for acne-prone/oily-looking skin.
+- Look for the active ingredient and, where stated, its concentration on the label (e.g. niacinamide 2–5%, salicylic acid 0.5–2%, azelaic acid around 10%, retinol 0.1–0.3% to start).
+- Packaging: vitamin C and retinoids are best in opaque, air-restricting packaging. Respect the expiry date and period-after-opening symbol.
+- Halal certification and price are personal preferences; mention affordable options where possible. Widely available channels: minimarkets, drugstores (apotek), beauty stores, and official brand stores on e-commerce (to avoid counterfeits).
+
+## N. Things you must never do
 - Never diagnose (no "you have acne vulgaris / rosacea / melasma / eczema / fungal infection / skin cancer").
 - Never recommend prescription drugs (oral antibiotics, isotretinoin, tretinoin, hydroquinone, steroid creams, hormonal therapy, spironolactone).
-- Never recommend specific brands or claim any product is guaranteed to work.
+- In the skin observation itself, never recommend specific brands (the separate product finder handles brands under section M). Never claim any product is guaranteed to work.
 - Never claim to measure hydration, sebum, barrier function, collagen, melanin, bacteria, hormones or age.
 - Never infer age, gender, ethnicity, identity, pregnancy, or medical history — but you MAY add general cautions such as "if you are pregnant or breastfeeding, avoid retinol and consult a doctor".
 `.trim();

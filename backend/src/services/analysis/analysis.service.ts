@@ -3,6 +3,8 @@ import type { Logger } from 'pino';
 import { Errors } from '../../utils/errors';
 import { normalizeAnalysis, BASE_DISCLAIMER } from '../../schemas/skin-analysis.schema';
 import type { SkinAnalyzer } from '../gemini/gemini.service';
+import type { ProductFinder } from '../products/product-finder';
+import type { ProductSuggestions } from '../../schemas/product-suggestions.schema';
 import { KNOWLEDGE_VERSION } from '../gemini/dermatology-knowledge';
 import { processUploadedImage } from '../image/image.service';
 import {
@@ -18,6 +20,7 @@ const SIGNED_URL_TTL_MS = 10 * 60 * 1000;
 
 export interface AnalysisServiceDeps {
   analyzer: SkinAnalyzer;
+  productFinder: ProductFinder;
   store: AnalysisStore;
   photos: PhotoStore;
   accounts: AccountAdmin;
@@ -117,6 +120,18 @@ export class AnalysisService {
     const record = await this.requireOwned(user, analysisId);
     if (record.photoStoragePath) await this.d.photos.delete(record.photoStoragePath);
     await this.d.store.update(user.uid, analysisId, { photoStorageEnabled: false, photoStoragePath: null });
+  }
+
+  /**
+   * Product suggestions for one of the user's analyses. Cached on the record so reopening is
+   * instant and free; refresh=true asks Gemini again.
+   */
+  async findProducts(user: AuthenticatedUser, analysisId: string, refresh: boolean): Promise<ProductSuggestions> {
+    const record = await this.requireOwned(user, analysisId);
+    if (record.productSuggestions && !refresh) return record.productSuggestions;
+    const suggestions = await this.d.productFinder.find(record);
+    await this.d.store.update(user.uid, analysisId, { productSuggestions: suggestions });
+    return suggestions;
   }
 
   async addFeedback(

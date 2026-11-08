@@ -6,6 +6,7 @@ import com.chai.aiskin.core.common.DispatcherProvider
 import com.chai.aiskin.core.network.ApiJson
 import com.chai.aiskin.data.remote.SkinApi
 import com.chai.aiskin.data.repository.AnalysisRepositoryImpl
+import com.chai.aiskin.domain.model.ProductType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import okhttp3.MediaType.Companion.toMediaType
@@ -61,6 +62,34 @@ class AnalysisRepositoryImplTest {
         assertTrue(body.contains("name=\"storePhoto\""))
         assertTrue(body.contains("true"))
         assertTrue((r as AppResult.Failure).error is AppError.InsufficientQuality)
+    }
+
+    @Test fun `findProducts posts refresh flag and maps suggestions defensively`() = runTest {
+        server.enqueue(MockResponse().setBody("""
+            {"success":true,"data":{"analysisId":"a1","summary":"Ringkas","createdAt":"2026-11-08T10:00:00Z","searchGrounded":false,
+             "disclaimer":"Cek BPOM","generalTips":["Patch test"],
+             "sources":[{"title":"ok","url":"https://example.com/a"},{"title":"bad","url":"http://example.com/b"}],
+             "products":[{"name":"Gel SPF 45","brand":"Azarine","productType":"sunscreen","keyIngredients":["niacinamide"],
+               "whyItFits":"w","howToUse":"h","routineTime":"morning","priceRange":"Rp40.000","cautions":"",
+               "searchUrl":"https://www.google.com/search?q=x","shopUrl":"https://shopee.co.id/search?keyword=x"},
+              {"name":"Mystery","brand":"B","productType":"time_machine","routineTime":"whenever",
+               "searchUrl":"javascript:alert(1)","shopUrl":"http://shop.example","futureField":1}]}}
+        """.trimIndent()))
+        val r = repo.findProducts("a1", refresh = true)
+        val req = server.takeRequest()
+        assertEquals("/api/v1/skin-analysis/a1/products", req.path)
+        assertEquals("POST", req.method)
+        assertEquals("""{"refresh":true}""", req.body.readUtf8())
+
+        val s = (r as AppResult.Success).data
+        assertEquals(false, s.searchGrounded)
+        assertEquals(listOf("https://example.com/a"), s.sources.map { it.url })
+        assertEquals(ProductType.SUNSCREEN, s.products[0].type)
+        assertEquals("Pagi", s.products[0].whenToUse)
+        assertEquals(ProductType.OTHER, s.products[1].type)
+        assertEquals("Pagi & malam", s.products[1].whenToUse)
+        assertEquals("", s.products[1].searchUrl) // non-https links are never opened
+        assertEquals("", s.products[1].shopUrl)
     }
 
     @Test fun `network interruption maps to Network error`() = runTest {

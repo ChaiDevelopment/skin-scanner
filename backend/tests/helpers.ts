@@ -4,6 +4,7 @@ import { loadConfig, type AppConfig } from '../src/config/env';
 import { InMemoryAnalysisStore, InMemoryPhotoStore, NoopAccountAdmin } from '../src/services/analysis/memory-stores';
 import type { AccountAdmin, TokenVerifier } from '../src/services/analysis/types';
 import { GeminiSkinAnalyzer, type GenerateContentFn } from '../src/services/gemini/gemini.service';
+import { GeminiProductFinder, type ProductGenerateFn } from '../src/services/products/product-finder';
 import { Errors } from '../src/utils/errors';
 import { silentLogger } from '../src/utils/logger';
 
@@ -43,6 +44,35 @@ export const validGeminiOutput = {
   professional_consultation_recommended: false,
   professional_consultation_reason: '',
   unexpected_field: 'should be stripped',
+};
+
+export const validProductOutput = {
+  summary: 'Fokus pada tabir surya harian dan niacinamide untuk tampilan pori.',
+  products: [
+    {
+      name: 'UV Shield Essential Sunscreen Gel SPF 35 PA+++',
+      brand: 'Wardah',
+      product_type: 'sunscreen',
+      key_ingredients: ['UV filter'],
+      why_it_fits: 'Tabir surya harian ringan untuk kulit yang tampak berminyak.',
+      how_to_use: 'Oleskan dua ruas jari setiap pagi.',
+      routine_time: 'morning',
+      price_range: 'Rp35.000–45.000',
+      cautions: '',
+    },
+    {
+      name: '10% Niacinamide Serum',
+      brand: 'Somethinc',
+      product_type: 'serum',
+      key_ingredients: ['niacinamide'],
+      why_it_fits: 'Mengandung niacinamide sesuai rekomendasi untuk tampilan pori.',
+      how_to_use: 'Pakai 2–3 tetes setelah cuci muka.',
+      routine_time: 'both',
+      price_range: '',
+      cautions: 'Hentikan jika perih.',
+    },
+  ],
+  general_tips: ['Lakukan patch test terlebih dahulu.'],
 };
 
 export const insufficientGeminiOutput = {
@@ -87,6 +117,7 @@ export function testConfig(overrides: Record<string, string> = {}): AppConfig {
 export function buildTestApp(
   opts: {
     generate?: GenerateContentFn;
+    productGenerate?: ProductGenerateFn;
     env?: Record<string, string>;
     verifier?: TokenVerifier | null;
     photosAvailable?: boolean;
@@ -98,9 +129,11 @@ export function buildTestApp(
   const photos = new InMemoryPhotoStore(opts.photosAvailable ?? true);
   const accounts = new RecordingAccountAdmin();
   const analyzer = new GeminiSkinAnalyzer(config.gemini, silentLogger, opts.generate ?? textResponse(validGeminiOutput));
+  const productFinder = new GeminiProductFinder(config.gemini, silentLogger, opts.productGenerate ?? (async () => ({ text: JSON.stringify(validProductOutput) })));
   const app = createApp({
     config,
     logger: silentLogger,
+    productFinder,
     verifier: opts.verifier === undefined ? new FakeVerifier() : opts.verifier,
     analyzer,
     store,

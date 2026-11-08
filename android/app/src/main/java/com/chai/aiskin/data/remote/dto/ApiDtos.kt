@@ -101,6 +101,39 @@ data class HistoryItemDto(
 data class HistoryResponseDto(val items: List<HistoryItemDto>, val nextCursor: String? = null)
 
 @Serializable
+data class ProductsRequestDto(val refresh: Boolean = false)
+
+@Serializable
+data class ProductDto(
+    val name: String,
+    val brand: String,
+    val productType: String = "other",
+    val keyIngredients: List<String> = emptyList(),
+    val whyItFits: String = "",
+    val howToUse: String = "",
+    val routineTime: String = "both",
+    val priceRange: String = "",
+    val cautions: String = "",
+    val searchUrl: String,
+    val shopUrl: String,
+)
+
+@Serializable
+data class ProductSourceDto(val title: String, val url: String)
+
+@Serializable
+data class ProductSuggestionsDto(
+    val analysisId: String,
+    val summary: String,
+    val products: List<ProductDto> = emptyList(),
+    val generalTips: List<String> = emptyList(),
+    val sources: List<ProductSourceDto> = emptyList(),
+    val searchGrounded: Boolean = false,
+    val disclaimer: String = "",
+    val createdAt: String,
+)
+
+@Serializable
 data class FeedbackRequestDto(val helpful: Boolean, val accuracyRating: Int? = null, val comment: String? = null)
 
 @Serializable

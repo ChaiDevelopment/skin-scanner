@@ -26,6 +26,10 @@ export const FeedbackBody = z
   })
   .strict();
 
+export const ProductsBody = z
+  .object({ refresh: z.boolean().optional().default(false) })
+  .strict();
+
 export const AccountDeletionBody = z
   .object({
     confirm: z.literal('DELETE', { errorMap: () => ({ message: 'Ketik DELETE untuk konfirmasi.' }) }),

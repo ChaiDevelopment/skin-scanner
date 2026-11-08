@@ -1,4 +1,5 @@
 import type { SkinAnalysisResult } from '../../schemas/skin-analysis.schema';
+import type { ProductSuggestions } from '../../schemas/product-suggestions.schema';
 
 export interface AnalysisFeedback {
   helpful: boolean;
@@ -17,6 +18,8 @@ export interface StoredAnalysis extends SkinAnalysisResult {
   photoStorageEnabled: boolean;
   photoStoragePath: string | null;
   feedback: AnalysisFeedback | null;
+  /** Cached product finder result (absent on older records). */
+  productSuggestions?: ProductSuggestions | null;
 }
 
 export interface ListOptions {
@@ -35,7 +38,7 @@ export interface AnalysisStore {
   create(record: StoredAnalysis): Promise<void>;
   get(uid: string, analysisId: string): Promise<StoredAnalysis | null>;
   list(uid: string, opts: ListOptions): Promise<ListResult>;
-  update(uid: string, analysisId: string, patch: Partial<Pick<StoredAnalysis, 'feedback' | 'photoStorageEnabled' | 'photoStoragePath'>>): Promise<void>;
+  update(uid: string, analysisId: string, patch: Partial<Pick<StoredAnalysis, 'feedback' | 'photoStorageEnabled' | 'photoStoragePath' | 'productSuggestions'>>): Promise<void>;
   delete(uid: string, analysisId: string): Promise<void>;
   /** Removes users/{uid} and every subcollection (analyses, preferences). */
   deleteAllForUser(uid: string): Promise<void>;

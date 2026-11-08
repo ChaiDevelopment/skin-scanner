@@ -1,7 +1,8 @@
 import type { Request, Response } from 'express';
 import type { AnalysisService } from '../services/analysis/analysis.service';
 import type { StoredAnalysis } from '../services/analysis/types';
-import { AnalysisIdParams, AnalyzeBody, FeedbackBody, HistoryQuery } from '../validators/analysis.validators';
+import { AnalysisIdParams, AnalyzeBody, FeedbackBody, HistoryQuery, ProductsBody } from '../validators/analysis.validators';
+import type { ProductSuggestions } from '../schemas/product-suggestions.schema';
 import { Errors } from '../utils/errors';
 
 /** Public shape of an analysis. Internal fields (uid, storage path) are not exposed. */
@@ -40,6 +41,19 @@ export function toApiHistoryItem(r: StoredAnalysis, photoUrl: string | null = nu
     professionalConsultationRecommended: r.professionalConsultationRecommended,
     photoStorageEnabled: r.photoStorageEnabled,
     photoUrl,
+  };
+}
+
+export function toApiProducts(analysisId: string, p: ProductSuggestions) {
+  return {
+    analysisId,
+    summary: p.summary,
+    products: p.products,
+    generalTips: p.generalTips,
+    sources: p.sources,
+    searchGrounded: p.searchGrounded,
+    disclaimer: p.disclaimer,
+    createdAt: p.createdAt.toISOString(),
   };
 }
 
@@ -97,6 +111,14 @@ export function analysisController(service: AnalysisService) {
       const body = FeedbackBody.parse(req.body ?? {});
       await service.addFeedback(user, analysisId, body);
       res.status(201).json({ success: true, data: { analysisId, feedbackSaved: true } });
+    },
+
+    products: async (req: Request, res: Response) => {
+      const user = userOf(req);
+      const { analysisId } = AnalysisIdParams.parse(req.params);
+      const { refresh } = ProductsBody.parse(req.body ?? {});
+      const suggestions = await service.findProducts(user, analysisId, refresh);
+      res.json({ success: true, data: toApiProducts(analysisId, suggestions) });
     },
   };
 }

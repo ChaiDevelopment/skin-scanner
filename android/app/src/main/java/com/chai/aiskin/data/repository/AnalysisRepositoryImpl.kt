@@ -8,7 +8,9 @@ import com.chai.aiskin.data.model.toDomain
 import com.chai.aiskin.data.remote.SkinApi
 import com.chai.aiskin.data.remote.dto.AccountDeletionRequestDto
 import com.chai.aiskin.data.remote.dto.FeedbackRequestDto
+import com.chai.aiskin.data.remote.dto.ProductsRequestDto
 import com.chai.aiskin.domain.model.HistoryPage
+import com.chai.aiskin.domain.model.ProductSuggestions
 import com.chai.aiskin.domain.model.SkinAnalysis
 import com.chai.aiskin.domain.repository.AnalysisRepository
 import kotlinx.coroutines.withContext
@@ -56,6 +58,10 @@ class AnalysisRepositoryImpl @Inject constructor(
         withContext(dispatchers.io) {
             apiCall { api.feedback(id, FeedbackRequestDto(helpful, rating, comment?.trim()?.takeIf { it.isNotEmpty() })) }.map { }
         }
+
+    override suspend fun findProducts(id: String, refresh: Boolean): AppResult<ProductSuggestions> = withContext(dispatchers.io) {
+        apiCall { api.products(id, ProductsRequestDto(refresh)) }.map { it.toDomain() }
+    }
 
     override suspend fun deleteAccount(): AppResult<Unit> = withContext(dispatchers.io) {
         apiCall { api.deleteAccount(AccountDeletionRequestDto()) }.map { }

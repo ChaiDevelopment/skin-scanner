@@ -12,6 +12,7 @@ import { buildRouter } from './routes';
 import { AnalysisService } from './services/analysis/analysis.service';
 import type { AccountAdmin, AnalysisStore, PhotoStore, TokenVerifier } from './services/analysis/types';
 import type { SkinAnalyzer } from './services/gemini/gemini.service';
+import type { ProductFinder } from './services/products/product-finder';
 import { Errors } from './utils/errors';
 
 export interface AppDeps {
@@ -19,6 +20,7 @@ export interface AppDeps {
   logger: Logger;
   verifier: TokenVerifier | null;
   analyzer: SkinAnalyzer;
+  productFinder: ProductFinder;
   store: AnalysisStore;
   photos: PhotoStore;
   accounts: AccountAdmin;
@@ -64,6 +66,7 @@ export function createApp(deps: AppDeps): Express {
 
   const service = new AnalysisService({
     analyzer: deps.analyzer,
+    productFinder: deps.productFinder,
     store: deps.store,
     photos: deps.photos,
     accounts: deps.accounts,

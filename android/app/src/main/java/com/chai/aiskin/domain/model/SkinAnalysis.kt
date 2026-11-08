@@ -193,4 +193,41 @@ data class HistoryItem(
     val photoUrl: String? = null,
 )
 
+enum class ProductType(val label: String) {
+    CLEANSER("Pembersih"), TONER("Toner"), SERUM("Serum"), MOISTURIZER("Pelembap"), SUNSCREEN("Tabir surya"),
+    EXFOLIANT("Eksfoliasi"), SPOT_TREATMENT("Obat totol"), OTHER("Lainnya");
+
+    companion object {
+        fun from(raw: String) = entries.firstOrNull { it.name.equals(raw, ignoreCase = true) } ?: OTHER
+    }
+}
+
+data class ProductSuggestion(
+    val name: String,
+    val brand: String,
+    val type: ProductType,
+    val keyIngredients: List<String>,
+    val whyItFits: String,
+    val howToUse: String,
+    /** "Pagi", "Malam", "Pagi & malam" or "Mingguan". */
+    val whenToUse: String,
+    val priceRange: String,
+    val cautions: String,
+    val searchUrl: String,
+    val shopUrl: String,
+)
+
+data class ProductSource(val title: String, val url: String)
+
+data class ProductSuggestions(
+    val summary: String,
+    val products: List<ProductSuggestion>,
+    val tips: List<String>,
+    val sources: List<ProductSource>,
+    /** false = Google Search was unavailable; answer is from AI knowledge only. */
+    val searchGrounded: Boolean,
+    val disclaimer: String,
+    val createdAt: Instant,
+)
+
 data class HistoryPage(val items: List<HistoryItem>, val nextCursor: String?)

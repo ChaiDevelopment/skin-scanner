@@ -45,6 +45,7 @@ import com.chai.aiskin.features.onboarding.SplashScreen
 import com.chai.aiskin.features.preview.PreviewScreen
 import com.chai.aiskin.features.profile.ProfileScreen
 import com.chai.aiskin.features.result.ResultScreen
+import com.chai.aiskin.features.products.ProductsScreen
 import com.chai.aiskin.features.scanning.ScanningScreen
 import com.chai.aiskin.features.settings.PrivacyScreen
 import com.chai.aiskin.features.settings.SettingsScreen
@@ -157,8 +158,10 @@ fun AppNavHost(nav: NavHostController = rememberNavController(), startVm: StartV
                     onDone = ::goHome,
                     onScanAgain = { goHome(); openCamera() },
                     onDeleted = { if (r.fresh) goHome() else nav.popBackStack() },
+                    onFindProducts = { nav.navigate(Route.Products(r.analysisId)) },
                 )
             }
+            composable<Route.Products> { ProductsScreen(onBack = { nav.popBackStack() }) }
             composable<Route.History> {
                 HistoryScreen(
                     onOpen = { nav.navigate(Route.Result(it, fresh = false)) },

@@ -52,6 +52,9 @@ function fromDoc(data: DocumentData): StoredAnalysis {
     ...(data as StoredAnalysis),
     createdAt: toDate(data.createdAt),
     feedback: data.feedback ? { ...data.feedback, createdAt: toDate(data.feedback.createdAt) } : null,
+    productSuggestions: data.productSuggestions
+      ? { ...data.productSuggestions, createdAt: toDate(data.productSuggestions.createdAt) }
+      : null,
   };
 }
 
@@ -113,6 +116,9 @@ export class FirestoreAnalysisStore implements AnalysisStore {
   async update(uid: string, analysisId: string, patch: Partial<StoredAnalysis>): Promise<void> {
     const data: DocumentData = { ...patch };
     if (patch.feedback) data.feedback = { ...patch.feedback, createdAt: Timestamp.fromDate(patch.feedback.createdAt) };
+    if (patch.productSuggestions) {
+      data.productSuggestions = { ...patch.productSuggestions, createdAt: Timestamp.fromDate(patch.productSuggestions.createdAt) };
+    }
     await this.col(uid).doc(analysisId).update(data);
   }
 

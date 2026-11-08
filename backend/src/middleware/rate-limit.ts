@@ -12,14 +12,14 @@ export function globalLimiter() {
   });
 }
 
-/** Per-user limiter for the expensive analysis endpoint. Must run after requireAuth. */
-export function analysisLimiter(windowMs: number, max: number) {
+/** Per-user limiter for expensive AI endpoints. Must run after requireAuth. [scope] keeps separate budgets per endpoint. */
+export function analysisLimiter(windowMs: number, max: number, scope = 'analysis') {
   return rateLimit({
     windowMs,
     limit: max,
     standardHeaders: 'draft-7',
     legacyHeaders: false,
-    keyGenerator: (req) => `uid:${req.user?.uid ?? 'anonymous'}`,
+    keyGenerator: (req) => `${scope}:uid:${req.user?.uid ?? 'anonymous'}`,
     handler: (_req, _res, next) => next(Errors.rateLimited()),
   });
 }

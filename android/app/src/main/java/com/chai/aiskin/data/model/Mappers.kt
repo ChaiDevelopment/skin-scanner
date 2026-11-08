@@ -4,6 +4,7 @@ import com.chai.aiskin.data.remote.dto.AnalysisDto
 import com.chai.aiskin.data.remote.dto.HistoryItemDto
 import com.chai.aiskin.data.remote.dto.HistoryResponseDto
 import com.chai.aiskin.data.remote.dto.ImageQualityDto
+import com.chai.aiskin.data.remote.dto.ProductSuggestionsDto
 import com.chai.aiskin.data.remote.dto.SkinAppearanceDto
 import com.chai.aiskin.domain.model.AnalysisFeedback
 import com.chai.aiskin.domain.model.FaceArea
@@ -13,6 +14,10 @@ import com.chai.aiskin.domain.model.ImageQuality
 import com.chai.aiskin.domain.model.ImageQualityStatus
 import com.chai.aiskin.domain.model.Observation
 import com.chai.aiskin.domain.model.ObservationCategory
+import com.chai.aiskin.domain.model.ProductSource
+import com.chai.aiskin.domain.model.ProductSuggestion
+import com.chai.aiskin.domain.model.ProductSuggestions
+import com.chai.aiskin.domain.model.ProductType
 import com.chai.aiskin.domain.model.Recommendation
 import com.chai.aiskin.domain.model.RecommendationPriority
 import com.chai.aiskin.domain.model.Severity
@@ -89,6 +94,40 @@ fun HistoryItemDto.toDomain() = HistoryItem(
     consultationRecommended = professionalConsultationRecommended,
     photoStored = photoStorageEnabled,
     photoUrl = photoUrl,
+)
+
+private fun routineLabel(raw: String) = when (raw) {
+    "morning" -> "Pagi"
+    "evening" -> "Malam"
+    "weekly" -> "Mingguan"
+    else -> "Pagi & malam"
+}
+
+/** Only https links built by our backend are shown; anything else is dropped. */
+private fun safeUrl(raw: String) = raw.takeIf { it.startsWith("https://") }.orEmpty()
+
+fun ProductSuggestionsDto.toDomain() = ProductSuggestions(
+    summary = summary,
+    products = products.map {
+        ProductSuggestion(
+            name = it.name,
+            brand = it.brand,
+            type = ProductType.from(it.productType),
+            keyIngredients = it.keyIngredients,
+            whyItFits = it.whyItFits,
+            howToUse = it.howToUse,
+            whenToUse = routineLabel(it.routineTime),
+            priceRange = it.priceRange,
+            cautions = it.cautions,
+            searchUrl = safeUrl(it.searchUrl),
+            shopUrl = safeUrl(it.shopUrl),
+        )
+    },
+    tips = generalTips,
+    sources = sources.mapNotNull { s -> safeUrl(s.url).takeIf { it.isNotEmpty() }?.let { ProductSource(s.title, it) } },
+    searchGrounded = searchGrounded,
+    disclaimer = disclaimer,
+    createdAt = parseInstant(createdAt),
 )
 
 fun HistoryResponseDto.toDomain() = HistoryPage(items.map { it.toDomain() }, nextCursor)

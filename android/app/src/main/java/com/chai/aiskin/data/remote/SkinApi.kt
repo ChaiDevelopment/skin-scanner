@@ -7,6 +7,8 @@ import com.chai.aiskin.data.remote.dto.ApiEnvelope
 import com.chai.aiskin.data.remote.dto.FeedbackRequestDto
 import com.chai.aiskin.data.remote.dto.GenericAckDto
 import com.chai.aiskin.data.remote.dto.HistoryResponseDto
+import com.chai.aiskin.data.remote.dto.ProductSuggestionsDto
+import com.chai.aiskin.data.remote.dto.ProductsRequestDto
 import kotlinx.serialization.json.JsonObject
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -46,6 +48,9 @@ interface SkinApi {
 
     @POST("api/v1/skin-analysis/{id}/feedback")
     suspend fun feedback(@Path("id") id: String, @Body body: FeedbackRequestDto): Response<ApiEnvelope<GenericAckDto>>
+
+    @POST("api/v1/skin-analysis/{id}/products")
+    suspend fun products(@Path("id") id: String, @Body body: ProductsRequestDto): Response<ApiEnvelope<ProductSuggestionsDto>>
 
     @POST("api/v1/user/account-deletion")
     suspend fun deleteAccount(@Body body: AccountDeletionRequestDto): Response<ApiEnvelope<GenericAckDto>>

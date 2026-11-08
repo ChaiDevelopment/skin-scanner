@@ -103,6 +103,25 @@ Deletes only the stored photo; the text analysis remains.
 ### POST /skin-analysis/:analysisId/feedback
 `application/json`: `{ "helpful": true, "accuracyRating": 4, "comment": "optional, ≤1000 chars" }`. Returns **201**.
 
+### POST /skin-analysis/:analysisId/products
+AI skincare product suggestions for one of the caller's analyses. Body: `{ "refresh": false }` (optional).
+The result is cached on the analysis; `refresh: true` asks Gemini again. Per-user rate limit (separate budget from scans).
+
+Gemini first tries **Google Search grounding**. If the key has no search quota (free tier → 429) the server falls back to
+model knowledge only for 30 minutes and returns `searchGrounded: false`. `searchUrl`/`shopUrl` are built by the server
+from the product name (never taken from the model). Brief sent to Gemini contains only the skin findings — no photo, uid or email.
+```json
+{ "success": true, "data": {
+  "analysisId": "…", "summary": "…", "searchGrounded": false, "createdAt": "2026-11-08T10:00:00.000Z",
+  "products": [ { "name": "Hydrasoothe Sunscreen Gel SPF 45 PA++++", "brand": "Azarine", "productType": "sunscreen",
+    "keyIngredients": ["niacinamide"], "whyItFits": "…", "howToUse": "…", "routineTime": "morning",
+    "priceRange": "Rp39.000–65.000", "cautions": "",
+    "searchUrl": "https://www.google.com/search?q=…", "shopUrl": "https://shopee.co.id/search?keyword=…" } ],
+  "generalTips": ["…"], "sources": [ { "title": "…", "url": "https://…" } ], "disclaimer": "…" } }
+```
+`productType`: cleanser | toner | serum | moisturizer | sunscreen | exfoliant | spot_treatment | other.
+`routineTime`: morning | evening | both | weekly. Errors: 404 (not yours), 429, 502/503/504 (AI).
+
 ### POST /user/account-deletion
 `application/json`: `{ "confirm": "DELETE" }`. Deletes, in order:
 1. every stored photo;

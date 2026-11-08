@@ -49,6 +49,12 @@ export function buildRouter(opts: {
   r.delete('/skin-analysis/:analysisId', auth, wrap(analysis.remove));
   r.delete('/skin-analysis/:analysisId/photo', auth, wrap(analysis.removePhoto));
   r.post('/skin-analysis/:analysisId/feedback', auth, wrap(analysis.feedback));
+  r.post(
+    '/skin-analysis/:analysisId/products',
+    auth,
+    analysisLimiter(opts.config.rateLimit.windowMs, opts.config.rateLimit.maxRequests, 'products'),
+    wrap(analysis.products),
+  );
   r.post('/user/account-deletion', auth, wrap(sys.deleteAccount));
 
   return r;

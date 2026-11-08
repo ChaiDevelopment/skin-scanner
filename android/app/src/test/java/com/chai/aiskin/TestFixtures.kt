@@ -5,6 +5,7 @@ import com.chai.aiskin.core.common.AppResult
 import com.chai.aiskin.domain.model.FaceArea
 import com.chai.aiskin.domain.model.HistoryItem
 import com.chai.aiskin.domain.model.HistoryPage
+import com.chai.aiskin.domain.model.ProductSuggestions
 import com.chai.aiskin.domain.model.ImageQuality
 import com.chai.aiskin.domain.model.ImageQualityStatus
 import com.chai.aiskin.domain.model.Observation
@@ -68,6 +69,12 @@ class FakeAnalysisRepository(totalItems: Int = 0) : AnalysisRepository {
     }
 
     override suspend fun get(id: String) = AppResult.Success(TestFixtures.analysis(id))
+    var productsResult: AppResult<ProductSuggestions> = AppResult.Failure(AppError.Server("not stubbed"))
+    val productCalls = mutableListOf<Pair<String, Boolean>>()
+    override suspend fun findProducts(id: String, refresh: Boolean): AppResult<ProductSuggestions> {
+        productCalls += id to refresh
+        return productsResult
+    }
     override suspend fun delete(id: String): AppResult<Unit> {
         failDelete?.let { return AppResult.Failure(it) }
         items.removeAll { it.id == id }
