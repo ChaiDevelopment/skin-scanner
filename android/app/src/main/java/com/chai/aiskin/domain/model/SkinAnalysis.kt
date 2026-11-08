@@ -190,6 +190,7 @@ data class HistoryItem(
     val appearance: SkinAppearance,
     val consultationRecommended: Boolean,
     val photoStored: Boolean,
+    val photoUrl: String? = null,
 )
 
 data class HistoryPage(val items: List<HistoryItem>, val nextCursor: String?)

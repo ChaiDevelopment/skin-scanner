@@ -27,7 +27,7 @@ export function toApiAnalysis(r: StoredAnalysis, photoUrl: string | null = null)
   };
 }
 
-export function toApiHistoryItem(r: StoredAnalysis) {
+export function toApiHistoryItem(r: StoredAnalysis, photoUrl: string | null = null) {
   const summary = r.overallSummary.length > 180 ? `${r.overallSummary.slice(0, 177)}…` : r.overallSummary;
   return {
     analysisId: r.analysisId,
@@ -39,6 +39,7 @@ export function toApiHistoryItem(r: StoredAnalysis) {
     skinAppearance: r.skinAppearance,
     professionalConsultationRecommended: r.professionalConsultationRecommended,
     photoStorageEnabled: r.photoStorageEnabled,
+    photoUrl,
   };
 }
 
@@ -57,7 +58,7 @@ export function analysisController(service: AnalysisService) {
       req.file = undefined;
       res.status(201).json({
         success: true,
-        data: { analysisId: record.analysisId, status: record.status, analysis: toApiAnalysis(record) },
+        data: { analysisId: record.analysisId, status: record.status, analysis: toApiAnalysis(record, await service.photoUrlFor(record)) },
       });
     },
 
@@ -65,7 +66,7 @@ export function analysisController(service: AnalysisService) {
       const user = userOf(req);
       const { limit, cursor } = HistoryQuery.parse(req.query);
       const page = await service.list(user, limit, cursor);
-      res.json({ success: true, data: { items: page.items.map(toApiHistoryItem), nextCursor: page.nextCursor } });
+      res.json({ success: true, data: { items: page.items.map((i) => toApiHistoryItem(i.record, i.photoUrl)), nextCursor: page.nextCursor } });
     },
 
     get: async (req: Request, res: Response) => {

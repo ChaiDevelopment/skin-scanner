@@ -60,6 +60,7 @@ import com.chai.aiskin.core.designsystem.ErrorView
 import com.chai.aiskin.core.designsystem.LoadingView
 import com.chai.aiskin.core.designsystem.PrimaryButton
 import com.chai.aiskin.core.designsystem.QuietButton
+import com.chai.aiskin.core.designsystem.ScanPhoto
 import com.chai.aiskin.core.designsystem.Spacing
 import com.chai.aiskin.core.designsystem.StatusPill
 import com.chai.aiskin.core.designsystem.Tone
@@ -204,6 +205,14 @@ private fun HistoryRow(
         Row(Modifier.padding(Spacing.md), verticalAlignment = Alignment.Top) {
             if (selectionMode) {
                 Icon(if (selected) Icons.Outlined.CheckCircle else Icons.Outlined.RadioButtonUnchecked, null, tint = ext.accent, modifier = Modifier.padding(top = 2.dp))
+                Spacer(Modifier.width(Spacing.sm))
+            }
+            if (item.photoStored) {
+                ScanPhoto(
+                    url = item.photoUrl,
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.size(64.dp).testTag("history_photo_${item.id}"),
+                )
                 Spacer(Modifier.width(Spacing.sm))
             }
             Column(Modifier.weight(1f)) {

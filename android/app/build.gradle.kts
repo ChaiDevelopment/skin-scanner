@@ -109,6 +109,10 @@ dependencies {
     implementation(libs.camerax.view)
     implementation(libs.mlkit.face)
     implementation(libs.guava) // ListenableFuture used by CameraX ProcessCameraProvider
+    // Stored scan photos (short-lived signed URLs). Coil uses its own OkHttp client, so the
+    // Firebase ID token interceptor is never sent to Cloud Storage.
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)

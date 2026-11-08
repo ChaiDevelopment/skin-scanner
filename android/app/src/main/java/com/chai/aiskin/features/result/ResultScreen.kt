@@ -2,6 +2,7 @@ package com.chai.aiskin.features.result
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chai.aiskin.core.common.AppError
@@ -47,6 +49,7 @@ import com.chai.aiskin.core.designsystem.ErrorView
 import com.chai.aiskin.core.designsystem.LoadingView
 import com.chai.aiskin.core.designsystem.PrimaryButton
 import com.chai.aiskin.core.designsystem.QuietButton
+import com.chai.aiskin.core.designsystem.ScanPhoto
 import com.chai.aiskin.core.designsystem.SecondaryButton
 import com.chai.aiskin.core.designsystem.Spacing
 
@@ -102,6 +105,13 @@ fun ResultScreen(
                 AnalysisBody(c.analysis)
                 if (c.analysis.photoStored) {
                     AppCard {
+                        ScanPhoto(
+                            url = c.analysis.photoUrl,
+                            shape = MaterialTheme.shapes.medium,
+                            iconSize = 40.dp,
+                            modifier = Modifier.fillMaxWidth().aspectRatio(3f / 4f).testTag("result_photo"),
+                        )
+                        Spacer(Modifier.height(Spacing.sm))
                         Text("Foto tersimpan", style = MaterialTheme.typography.titleSmall)
                         Spacer(Modifier.height(Spacing.xxs))
                         Text("Foto analisis ini disimpan di akun Anda.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

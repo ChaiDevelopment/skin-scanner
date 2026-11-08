@@ -214,6 +214,31 @@ describe('POST /skin-analysis — Gemini handling', () => {
     expect(photos.files.has(`users/alice/scans/${r2.body.data.analysisId}.jpg`)).toBe(true);
   });
 
+  it('still saves the analysis (without photo) when the photo upload fails', async () => {
+    const { app, photos, store } = buildTestApp();
+    photos.save = async () => {
+      throw new Error('The specified bucket does not exist.');
+    };
+    const res = await analyze(app, AUTH, true);
+    expect(res.status).toBe(201);
+    expect(res.body.data.analysis.photoStorageEnabled).toBe(false);
+    expect(res.body.data.analysis.photoUrl).toBeNull();
+    expect((await store.list('alice', { limit: 10 })).items).toHaveLength(1);
+  });
+
+  it('returns signed photo URLs in the create response and history items', async () => {
+    const { app, photos } = buildTestApp();
+    photos.signedReadUrl = async (path: string) => `https://signed.example/${path}`;
+    const withPhoto = await analyze(app, AUTH, true);
+    const id = withPhoto.body.data.analysisId;
+    expect(withPhoto.body.data.analysis.photoUrl).toBe(`https://signed.example/users/alice/scans/${id}.jpg`);
+    await analyze(app, AUTH, false);
+    const hist = await request(app).get('/api/v1/skin-analysis/history').set(AUTH);
+    const urls = hist.body.data.items.map((i: { analysisId: string; photoUrl: string | null }) => [i.analysisId === id, i.photoUrl]);
+    expect(urls).toContainEqual([true, `https://signed.example/users/alice/scans/${id}.jpg`]);
+    expect(urls).toContainEqual([false, null]);
+  });
+
   it('rate limits analysis per user (429)', async () => {
     const { app } = buildTestApp({ env: { RATE_LIMIT_MAX_REQUESTS: '2' } });
     expect((await analyze(app)).status).toBe(201);

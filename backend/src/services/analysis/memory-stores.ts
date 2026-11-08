@@ -76,7 +76,7 @@ export class InMemoryPhotoStore implements PhotoStore {
   async delete(path: string) {
     this.files.delete(path);
   }
-  async signedReadUrl() {
+  async signedReadUrl(_path: string, _ttlMs: number): Promise<string | null> {
     return null; // no public URL in memory mode
   }
   async deleteAllForUser(uid: string) {

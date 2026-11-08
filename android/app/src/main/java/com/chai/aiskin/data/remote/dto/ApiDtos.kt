@@ -94,6 +94,7 @@ data class HistoryItemDto(
     val skinAppearance: SkinAppearanceDto = SkinAppearanceDto(),
     val professionalConsultationRecommended: Boolean = false,
     val photoStorageEnabled: Boolean = false,
+    val photoUrl: String? = null,
 )
 
 @Serializable

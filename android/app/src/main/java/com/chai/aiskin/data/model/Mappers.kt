@@ -88,6 +88,7 @@ fun HistoryItemDto.toDomain() = HistoryItem(
     appearance = skinAppearance.toDomain(),
     consultationRecommended = professionalConsultationRecommended,
     photoStored = photoStorageEnabled,
+    photoUrl = photoUrl,
 )
 
 fun HistoryResponseDto.toDomain() = HistoryPage(items.map { it.toDomain() }, nextCursor)

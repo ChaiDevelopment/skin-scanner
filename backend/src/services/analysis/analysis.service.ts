@@ -51,8 +51,14 @@ export class AnalysisService {
       if (!this.d.photos.available) {
         this.d.logger.warn('storePhoto requested but photo storage is not configured; continuing without it');
       } else {
-        photoStoragePath = photoPathFor(user.uid, analysisId);
-        await this.d.photos.save(photoStoragePath, image.buffer, image.mimeType);
+        const path = photoPathFor(user.uid, analysisId);
+        try {
+          await this.d.photos.save(path, image.buffer, image.mimeType);
+          photoStoragePath = path;
+        } catch (err) {
+          // Photo retention is optional: a storage failure must not discard a completed analysis.
+          this.d.logger.error({ err: (err as Error).message }, 'Photo upload failed; saving analysis without photo');
+        }
       }
     }
 
@@ -82,15 +88,23 @@ export class AnalysisService {
 
   async get(user: AuthenticatedUser, analysisId: string): Promise<{ record: StoredAnalysis; photoUrl: string | null }> {
     const record = await this.requireOwned(user, analysisId);
-    const photoUrl =
-      record.photoStoragePath && this.d.photos.available
-        ? await this.d.photos.signedReadUrl(record.photoStoragePath, SIGNED_URL_TTL_MS)
-        : null;
-    return { record, photoUrl };
+    return { record, photoUrl: await this.photoUrlFor(record) };
   }
 
-  list(user: AuthenticatedUser, limit: number, cursor?: string) {
-    return this.d.store.list(user.uid, { limit, cursor });
+  /** Short-lived signed read URL for the record's stored photo, or null when there is none. */
+  async photoUrlFor(record: StoredAnalysis): Promise<string | null> {
+    return record.photoStoragePath && this.d.photos.available
+      ? this.d.photos.signedReadUrl(record.photoStoragePath, SIGNED_URL_TTL_MS)
+      : null;
+  }
+
+  /** History page; each item carries a short-lived signed URL for its stored photo (or null). */
+  async list(user: AuthenticatedUser, limit: number, cursor?: string) {
+    const page = await this.d.store.list(user.uid, { limit, cursor });
+    const items = await Promise.all(
+      page.items.map(async (record) => ({ record, photoUrl: await this.photoUrlFor(record) })),
+    );
+    return { items, nextCursor: page.nextCursor };
   }
 
   async delete(user: AuthenticatedUser, analysisId: string): Promise<void> {
