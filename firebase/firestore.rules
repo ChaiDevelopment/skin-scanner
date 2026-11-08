@@ -1,0 +1,53 @@
+rules_version = '2';
+
+// AI Skin Scanner — Firestore rules.
+// The Express backend uses the Admin SDK (bypasses these rules) and enforces
+// ownership itself. These rules protect direct client access.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      // Clients may read their own profile and create/update display fields only.
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid)
+        && request.resource.data.uid == uid
+        && request.resource.data.keys().hasOnly(['uid', 'displayName', 'email', 'createdAt', 'updatedAt'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() <= 80;
+      allow update: if isOwner(uid)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'updatedAt'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() <= 80;
+      allow delete: if false; // account deletion goes through the backend
+
+      // Analyses are written ONLY by the backend (validated Gemini output).
+      // Owners may read their own records. Deletion goes through the backend so the
+      // optional stored photo is always deleted together with the record.
+      match /skin_analyses/{analysisId} {
+        allow read: if isOwner(uid);
+        allow create, update, delete: if false;
+      }
+
+      // Small per-user preference documents (e.g. privacy settings).
+      match /preferences/{preferenceId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.size() <= 20
+          && preferenceId.size() <= 64;
+      }
+    }
+
+    // Deny everything else.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

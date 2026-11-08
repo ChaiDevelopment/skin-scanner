@@ -1,0 +1,9 @@
+# Copy to android/config.properties (gitignored). Not a place for secrets —
+# the APK never contains API keys; it only knows where the backend lives.
+
+# Debug builds. Android Emulator reaches the host machine at 10.0.2.2.
+# For a physical device on the same Wi-Fi, use your PC's LAN IP, e.g. http://192.168.1.20:3000/
+api.baseUrl.debug=http://10.0.2.2:3000/
+
+# Release builds MUST use HTTPS.
+api.baseUrl.release=https://your-deployed-backend.example.com/

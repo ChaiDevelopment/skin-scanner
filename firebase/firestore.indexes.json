@@ -1,0 +1,13 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "skin_analyses",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "createdAt", "order": "DESCENDING" },
+        { "fieldPath": "analysisId", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Minimal mark: a champagne ring with a soft face-contour arc and a highlight dot. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:strokeColor="#B8955A" android:strokeWidth="2.6" android:fillColor="#00000000"
+        android:pathData="M54,30 a24,24 0 1,1 -0.01,0 z" />
+    <path android:strokeColor="#2A2826" android:strokeWidth="2.6" android:strokeLineCap="round" android:fillColor="#00000000"
+        android:pathData="M45,40 C40,48 41,60 47,66 C51,70 57,70 61,66" />
+    <path android:fillColor="#B8955A" android:pathData="M64,44 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0" />
+</vector>

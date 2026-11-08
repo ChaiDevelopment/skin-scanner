@@ -1,0 +1,16 @@
+rules_version = '2';
+
+// AI Skin Scanner — Storage rules.
+// Photos are uploaded by the backend (Admin SDK) only when the user opted in.
+// Users may read and delete only their own scan photos; direct client writes are blocked.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /users/{uid}/scans/{fileName} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

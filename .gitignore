@@ -1,0 +1,28 @@
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+service-account*.json
+google-services.json
+local.properties
+android/config.properties
+
+# Build output
+build/
+.gradle/
+.kotlin/
+dist/
+coverage/
+node_modules/
+*.apk
+*.aab
+!android/gradle/wrapper/gradle-wrapper.jar
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+captures/
+*.log
