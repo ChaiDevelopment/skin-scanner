@@ -75,11 +75,9 @@ class PreviewViewModel @Inject constructor(
         PreviewUiState(scan, override ?: p.storePhotos)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, PreviewUiState(session.capture.value, false))
 
-    /** Per-scan choice; does not change the saved default. */
-    fun setStorePhoto(enabled: Boolean) { storeOverride.value = enabled }
-
     fun confirm(onConfirmed: () -> Unit) = viewModelScope.launch {
-        session.storePhoto = storeOverride.value ?: prefs.preferences.first().storePhotos
+        // Photo retention is switched off in this build: photos are only used for the analysis itself.
+        session.storePhoto = false
         onConfirmed()
     }
 
@@ -138,21 +136,6 @@ fun PreviewScreen(onConfirm: () -> Unit, onRetake: () -> Unit, vm: PreviewViewMo
 
             if (validation.isAcceptable) {
                 Spacer(Modifier.height(Spacing.lg))
-                AppCard {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Column(Modifier.weight(1f)) {
-                            Text("Simpan foto ini di akun saya", style = MaterialTheme.typography.titleSmall)
-                            Spacer(Modifier.height(Spacing.xxs))
-                            Text(
-                                if (s.storePhoto) "Foto disimpan bersama hasil analisis. Dapat dihapus kapan saja."
-                                else "Foto hanya dipakai untuk analisis ini dan tidak disimpan.",
-                                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        Switch(checked = s.storePhoto, onCheckedChange = vm::setStorePhoto, modifier = Modifier.testTag("store_photo_switch"))
-                    }
-                }
-                Spacer(Modifier.height(Spacing.sm))
                 NoticeBanner(
                     "Dengan melanjutkan, foto dikirim melalui server kami ke Google Gemini untuk observasi visual. Ini bukan diagnosis medis.",
                     icon = Icons.Outlined.Info,

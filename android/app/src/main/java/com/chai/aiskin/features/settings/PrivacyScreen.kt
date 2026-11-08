@@ -29,7 +29,7 @@ import com.chai.aiskin.features.onboarding.OnboardingViewModel
 private val sections = listOf(
     "Apa yang dianalisis" to "Hanya foto wajah yang Anda ambil dan konfirmasi sendiri di layar pratinjau. Kamera tidak pernah aktif tanpa izin Anda, dan aplikasi tidak melakukan pengenalan identitas wajah.",
     "Pemrosesan oleh pihak ketiga" to "Untuk dianalisis, foto dikirim melalui server kami ke Google Gemini (Google LLC). Server kami menghapus metadata foto (seperti lokasi) sebelum dikirim. Google memproses data sesuai ketentuan layanan Gemini API.",
-    "Penyimpanan foto" to "Secara bawaan foto TIDAK disimpan permanen: setelah analisis selesai, foto dihapus dari perangkat dan server kami. Hanya jika Anda mengaktifkan \"Simpan foto\", foto disimpan di Firebase Storage pada folder akun Anda sendiri.",
+    "Penyimpanan foto" to "Foto TIDAK disimpan: setelah analisis selesai, foto dihapus dari perangkat dan server kami. Yang disimpan di akun Anda hanya hasil analisis berupa teks.",
     "Data yang disimpan" to "Hasil analisis teks (ringkasan, observasi, rekomendasi, kualitas foto) disimpan di Cloud Firestore di bawah akun Anda dan hanya dapat diakses oleh Anda.",
     "Kendali Anda" to "Anda dapat menghapus foto saja, menghapus satu analisis (beserta fotonya), atau menghapus akun dan semua data kapan saja dari menu Profil. Penghapusan di aplikasi ini tidak otomatis menghapus data yang mungkin disimpan sementara oleh penyedia pihak ketiga sesuai kebijakan mereka.",
     "Bukan diagnosis medis" to "Hasil adalah observasi visual berbasis AI dan saran perawatan umum. Aplikasi tidak mendiagnosis penyakit kulit. Konsultasikan dengan dokter spesialis kulit untuk masalah yang menetap, memburuk, nyeri, atau mengkhawatirkan.",

@@ -79,19 +79,6 @@ fun SettingsScreen(onBack: () -> Unit, onPrivacy: () -> Unit, vm: SettingsViewMo
             verticalArrangement = Arrangement.spacedBy(Spacing.lg),
         ) {
             Eyebrow("Privasi")
-            AppCard {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Text("Simpan foto secara bawaan", style = MaterialTheme.typography.titleSmall)
-                        Spacer(Modifier.height(Spacing.xxs))
-                        Text(
-                            "Jika aktif, foto pindaian disimpan di akun Anda bersama hasilnya. Anda tetap bisa mengubahnya per pindaian. Foto dihapus otomatis saat analisisnya dihapus.",
-                            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                    Switch(checked = p.storePhotos, onCheckedChange = vm::setStorePhotos, modifier = Modifier.testTag("settings_store_photos"))
-                }
-            }
             AppCard(contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = Spacing.xs)) {
                 MenuRow(Icons.Outlined.PrivacyTip, "Kebijakan privasi & persetujuan", onPrivacy)
             }

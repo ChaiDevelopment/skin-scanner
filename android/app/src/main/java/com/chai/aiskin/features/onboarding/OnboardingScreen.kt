@@ -170,17 +170,6 @@ private fun ConsentPage(
                 )
             }
         }
-        Spacer(Modifier.height(Spacing.md))
-        AppCard {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text("Simpan foto di akun saya", style = MaterialTheme.typography.titleSmall)
-                    Spacer(Modifier.height(Spacing.xxs))
-                    Text("Opsional. Nonaktif secara bawaan. Dapat diubah di Pengaturan.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                Switch(checked = prefs.storePhotos, onCheckedChange = onStorePhotos)
-            }
-        }
         Spacer(Modifier.height(Spacing.sm))
         QuietButton("Baca kebijakan privasi lengkap", onOpenPrivacy)
     }
